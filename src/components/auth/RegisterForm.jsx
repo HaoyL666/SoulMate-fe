@@ -1,12 +1,12 @@
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-//import { signUpSchema } from "../../utils/validation";
-import AuthInput from "./AuthInput";
 import { signUpSchema } from "../../utils/validation";
+import AuthInput from './AuthInput'
 
-// import { useDispatch, useSelector } from "react-redux";
-// import PulseLoader from "react-spinners/PulseLoader";
-// import { Link, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import RingLoader from "react-spinners/RingLoader";
+import { Link, useNavigate } from "react-router-dom";
+import { changeStatus, registerUser } from "../../reducers/userReducer";
 // import { changeStatus, registerUser } from "../../../../whatsapp_fe/src/features/userSlice";
 // import { useState } from "react";
 // import Picture from "../../../../whatsapp_fe/src/components/auth/Picture";
@@ -14,9 +14,10 @@ import { signUpSchema } from "../../utils/validation";
 // const cloud_name = process.env.REACT_APP_CLOUD_NAME;
 // const cloud_secret = process.env.REACT_APP_CLOUD_SECRET;
 export default function RegisterForm() {
-  // const dispatch = useDispatch();
-  // const navigate = useNavigate();
-  // const { status, error } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { status, error } = useSelector((state) => state.user);
+
   // const [picture, setPicture] = useState();
   // const [readablePicture, setReadablePicture] = useState("");
   const {
@@ -28,7 +29,20 @@ export default function RegisterForm() {
     resolver: yupResolver(signUpSchema),
   });
 
-  const onSubmit = "hello"
+  const onSubmit = async (data) => {
+    // console.log(data)
+    // let res = await dispatch(registerUser());
+    // console.log(res)
+    dispatch(changeStatus("loading"));
+    let res = await dispatch(registerUser({ ...data, picture: "" }));
+    if (res.payload.user) {
+      //console.log(res.payload.user)
+      navigate("/");
+    }
+    // if (res.payload.user) {
+    //   navigate("/");
+    // }
+  };
   // const onSubmit = async (data) => {
   //   dispatch(changeStatus("loading"));
   //   if (picture) {
@@ -97,12 +111,34 @@ export default function RegisterForm() {
             register={register}
             error={errors?.password?.message}
           />
+          {/*if we have an error*/}
+          {error ? (
+            <div>
+              <p className="text-red-400">{error}</p>
+            </div>
+          ) : null}
           <button
             className="w-full flex justify-center bg-green_1 text-gray-100 p-4 rounded-full tracking-wide
           font-semibold focus:outline-none hover:bg-green_2 shadow-lg cursor-pointer transition ease-in duration-300
           "
-            type="submit"
-          >Register</button>
+            type="submit">
+
+            {status === "loading" ? (
+              <RingLoader color="#fff" size={30} />
+            ) : (
+              "Sign up"
+            )}
+          </button>
+          {/* Sign in link */}
+          <p className="flex flex-col items-center justify-center mt-10 text-center text-md dark:text-dark_text_1">
+            <span>have an account ?</span>
+            <Link
+              to="/login"
+              className=" hover:underline cursor-pointer transition ease-in duration-300"
+            >
+              Sign in
+            </Link>
+          </p>
         </ form>
 
       </div>

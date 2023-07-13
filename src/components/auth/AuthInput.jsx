@@ -11,7 +11,7 @@ export default function AuthInput({
                 {placeholder}
             </label>
             <input style={{ color: 'black' }}
-                className="w-full dark:bg-dark_bg_3 text-base py-2 px-4 rounded-lg outline-none text-black"
+                className="w-full dark:bg-dark_bg_3 text-base py-2 px-4 rounded-2xl outline-none text-black"
                 type={type}
                 placeholder={placeholder}
                 {...register(name)}
